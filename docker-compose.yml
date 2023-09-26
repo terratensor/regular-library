@@ -59,7 +59,7 @@ services:
       - ./docker/manticore/manticore.conf:/etc/manticoresearch/manticore.conf
 
   postgres:
-    container_name: cregular-library-postgres
+    container_name: regular-library-postgres
     image: postgres:15.1-alpine
     ports:
       - "54322:5432"
@@ -88,7 +88,7 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /mnt/d/docker/library_manticore_140
+      device: /mnt/d/docker/regular_library_manticore
       o: bind
 
 networks:
