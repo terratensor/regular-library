@@ -10,6 +10,7 @@ return [
     'urlShortenerHost' => getenv('URL_SHORTENER_HOST'), // Хост в сети интернет, в локальной сети docker - это наименования сервиса
     'urlShortenerUrl' => getenv('URL_SHORTENER_URL'), // Хост в сети интернет, в локальной сети docker - это наименования сервиса
     'shortLinkEnable' => getenv('SHORT_LINK_ENABLE'),
+    'cleanDesign' => getenv('CLEAN_DESIGN'), // default 0 не показывать меню сайта СВОДД, ничего лишнего
     'manticore' => [
         'host' => 'manticore',
         'port' => 9308,

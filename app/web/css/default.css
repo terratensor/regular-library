@@ -152,6 +152,8 @@
     --dr-search-form-bg: #bdbab6;
     --dr-search-form-body: #19191a;
     --dr-search-form-border: #f9f8f6;
+
+    --color-theme-widget: #A9A8A4;
 }
 
 [data-bs-theme=dark] {
@@ -246,7 +248,9 @@
     --dr-search-form-border: #191a1c;
 
     /* Цвет рамки danger card */
-    --bs-danger-rgb: 165, 0, 0
+    --bs-danger-rgb: 165, 0, 0;
+
+    --color-theme-widget: #111113;
 }
 
 /* СТИЛИ */
@@ -506,4 +510,20 @@ input:focus:-ms-input-placeholder {
 
 .paragraph-text div {
     padding-bottom: 10px;
+}
+
+.color-theme-widget {
+    z-index: 10000;
+    margin-bottom: 0.7rem !important;
+    margin-right: 1.3rem !important;
+}
+
+.color-theme-widget .btn-secondary {
+    background-color: var(--color-theme-widget);
+    border-color: var(--color-theme-widget);
+}
+
+.btn {
+    --bs-btn-padding-x: .6rem;
+    --bs-btn-padding-y: .375rem;
 }

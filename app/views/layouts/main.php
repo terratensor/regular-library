@@ -28,9 +28,12 @@ $this->registerMetaTag(['name' => 'description', 'content' => $this->params['met
 </head>
 <body class="d-flex flex-column h-100">
 <?php $this->beginBody() ?>
+<?php if (!Yii::$app->params['cleanDesign']): ?>
 <?= $this->render('red_header'); ?>
+<?php endif; ?>
 
 <main role="main" class="flex-shrink-0 mb-3">
+    <?php if (!Yii::$app->params['cleanDesign']): ?>
   <div class="container-fluid pb-0">
     <div class="d-flex justify-content-between align-items-baseline svodd-breadcrumb">
         <?= Breadcrumbs::widget(
@@ -44,12 +47,15 @@ $this->registerMetaTag(['name' => 'description', 'content' => $this->params['met
     </div>
       <?= Alert::widget() ?>
   </div>
+    <?php endif; ?>
 
     <?= $content ?>
 
 </main>
 
+<?php if (!Yii::$app->params['cleanDesign']): ?>
 <?= $this->render('footer'); ?>
+<?php endif; ?>
 
 <?php $this->endBody() ?>
 </body>
