@@ -178,7 +178,7 @@ $inputTemplate = '<div class="input-group mb-2">
                         'pagination' => $pagination,
                         'firstPageLabel' => true,
                         'lastPageLabel' => false,
-                        'maxButtonCount' => 3,
+                        'maxButtonCount' => 5,
                         'options' => [
                             'class' => 'd-flex justify-content-center'
                         ],

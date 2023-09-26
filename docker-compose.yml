@@ -57,6 +57,7 @@ services:
       - manticore:/var/lib/manticore
       - manticore:/var/log/manticore
       - ./docker/manticore/manticore.conf:/etc/manticoresearch/manticore.conf
+      - ./manticore/regular_library_manticore/data:/var/lib/manticore/data
 
   postgres:
     container_name: regular-library-postgres
@@ -85,11 +86,6 @@ secrets:
 volumes:
   postgres:
   manticore:
-    driver: local
-    driver_opts:
-      type: none
-      device: /mnt/d/docker/regular_library_manticore
-      o: bind
 
 networks:
   regular-library-net:
