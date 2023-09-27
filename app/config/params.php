@@ -12,7 +12,7 @@ return [
     'shortLinkEnable' => getenv('SHORT_LINK_ENABLE'),
     'cleanDesign' => getenv('CLEAN_DESIGN'), // default 0 не показывать меню сайта СВОДД, ничего лишнего
     'manticore' => [
-        'host' => 'manticore',
+        'host' => 'manticore_m',
         'port' => 9308,
         'max_matches' => getenv('MANTICORE_MAX_MATCHES') ?? 0, // Maximum amount of matches that the server keeps in RAM for each table and can return to the client. Default is unlimited.
     ],

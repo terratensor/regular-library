@@ -18,7 +18,7 @@ services:
       URL_SHORTENER_URL: http://localhost
       COOKIE_DOMAIN: localhost
       COOKIE_VALIDATION_KEY_FILE: /run/secrets/app_cookie_validation_key
-      MANTICORE_DB_NAME_COMMON: library_m
+      MANTICORE_DB_NAME_COMMON: library
       MANTICORE_MAX_MATCHES: 1000
       SHORT_LINK_ENABLE: 0
       CLEAN_DESIGN: 1
@@ -31,8 +31,8 @@ services:
     ports:
       - '8030:80'
 
-  manticore_m:
-    container_name: regular-library-manticore_m
+  manticore:
+    container_name: regular-library-manticore
     image: manticoresearch/manticore
     environment:
       - EXTRA=1
@@ -40,29 +40,7 @@ services:
       - "127.0.0.1:9306:9306"
       - "127.0.0.1:9308:9308"
       - "127.0.0.1:9312:9312"
-    cap_add:
-      - IPC_LOCK
-    ulimits:
-      nproc: 65535
-      nofile:
-        soft: 65535
-        hard: 65535
-      memlock:
-        soft: -1
-        hard: -1
-    networks:
-      - regular-library-net
-    volumes:
-      - manticore_m:/var/lib/manticore
-      - manticore_m:/var/log/manticore
-      - ./docker/manticore/manticore_m.conf:/etc/manticoresearch/manticore.conf
-#      - ./manticore/regular_library_manticore_1/data:/var/lib/manticore/data
 
-  manticore-1:
-    container_name: regular-library-manticore-1
-    image: manticoresearch/manticore
-    environment:
-      - EXTRA=1
     cap_add:
       - IPC_LOCK
     ulimits:
@@ -76,33 +54,10 @@ services:
     networks:
       - regular-library-net
     volumes:
-      - manticore_1:/var/lib/manticore
-      - manticore_1:/var/log/manticore
-      - ./docker/manticore/manticore_1.conf:/etc/manticoresearch/manticore.conf
-      - ./manticore/regular_library_manticore_1/data:/var/lib/manticore/data
-
-  manticore-2:
-    container_name: regular-library-manticore-2
-    image: manticoresearch/manticore
-    environment:
-      - EXTRA=1
-    cap_add:
-      - IPC_LOCK
-    ulimits:
-      nproc: 65535
-      nofile:
-        soft: 65535
-        hard: 65535
-      memlock:
-        soft: -1
-        hard: -1
-    networks:
-      - regular-library-net
-    volumes:
-      - manticore_2:/var/lib/manticore
-      - manticore_2:/var/log/manticore
-      - ./docker/manticore/manticore_2.conf:/etc/manticoresearch/manticore.conf
-      - ./manticore/regular_library_manticore_2/data:/var/lib/manticore/data
+      - manticore:/var/lib/manticore
+      - manticore:/var/log/manticore
+      - ./docker/manticore/manticore.conf:/etc/manticoresearch/manticore.conf
+      - ./manticore/regular_library_manticore/data:/var/lib/manticore/data
 
   postgres:
     container_name: regular-library-postgres
@@ -130,9 +85,7 @@ secrets:
 
 volumes:
   postgres:
-  manticore_m:
-  manticore_1:
-  manticore_2:
+  manticore:
 
 networks:
   regular-library-net:
