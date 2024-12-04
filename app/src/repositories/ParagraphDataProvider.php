@@ -34,7 +34,9 @@ class ParagraphDataProvider extends BaseDataProvider
         if ($pagination === false) {
             // в случае отсутствия разбивки на страницы - прочитать все строки
             foreach ($this->query->get() as $hit) {
-                $models[] = new Paragraph($hit->getData());
+                $model = new Paragraph($hit->getData());
+                $model->setId((int)$hit->getId());
+                $models[] = $model;
             }
         } else {
             // в случае, если разбивка на страницы есть - прочитать только одну страницу
@@ -47,7 +49,11 @@ class ParagraphDataProvider extends BaseDataProvider
 
             $limit = $pagination->getLimit();
 
-            $data = $this->query->get();
+            try {
+                $data = $this->query->get();
+            } catch (\Exception $e) {
+                return [];
+            }
 
             // Если количество записей меньше чем лимит,
             // то переписываем лимит, чтобы избежать ошибки Undefined array key при вызове $data->current()
@@ -92,7 +98,12 @@ class ParagraphDataProvider extends BaseDataProvider
 
     protected function prepareTotalCount()
     {
+        try {
+
         return $this->query->get()->getTotal();
+        } catch (\Exception $e) {
+            return 0;
+        }
     }
 
     /**

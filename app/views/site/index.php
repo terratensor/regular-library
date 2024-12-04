@@ -10,6 +10,8 @@
 use app\widgets\ScrollWidget;
 use app\widgets\SearchResultsSummary;
 use src\forms\SearchForm;
+use src\helpers\SearchResultHelper;
+use src\helpers\TextProcessor;
 use src\models\Paragraph;
 use src\repositories\ParagraphDataProvider;
 use yii\bootstrap5\ActiveForm;
@@ -127,40 +129,30 @@ $inputTemplate = '<div class="input-group mb-2">
               <div class="card pt-3">
                 <div class="card-body">
                     <?php foreach ($paragraphs as $paragraph): ?>
-                      <div class="px-xl-5 px-lg-5 px-md-5 px-sm-3 paragraph" data-entity-id="<?= $paragraph->uuid; ?>">
+                      <div class="px-xl-5 px-lg-5 px-md-5 px-sm-3 paragraph" data-entity-id="<?= $paragraph->id; ?>">
                         <div class="paragraph-header">
                           <div class="d-flex justify-content-between">
                             <div>
 
                             </div>
                             <div class="paragraph-context">
-                                <?= Html::button('контекст', [
-                                        'class' => 'btn btn-link btn-context paragraph-context',
-                                        'data-uuid' => $paragraph->uuid,
-                                ]); ?>
+                              <?= Html::a('контекст', ['site/context', 'id' => $paragraph->id],
+                               [
+                                'class' => 'btn btn-link btn-context paragraph-context',
+                                'target' => '_blank'
+                               ]); ?>                                
                             </div>
                           </div>
                         </div>
                         <div>
                           <div class="paragraph-text">
-                              <?php if (!$paragraph->highlight['text'] || !$paragraph->highlight['text'][0]): ?>
-                                  <?php Yii::$app->formatter->asRaw(htmlspecialchars($paragraph->text)); ?>
-                                  <?php echo \yii\helpers\HtmlPurifier::process(htmlspecialchars($paragraph->text), function ($config) {
-                                      /** @var $config HTMLPurifier_Config */
-                                      $config->getHTMLDefinition(true)
-                                          ->addElement('mark', 'Block', 'Flow', 'Common');
-                                  }); ?>
-                              <?php else: ?>
-                                  <?php echo \yii\helpers\HtmlPurifier::process($paragraph->highlight['text'][0], function ($config) {
-                                      /** @var $config HTMLPurifier_Config */
-                                      $config->getHTMLDefinition(true)
-                                          ->addElement('mark', 'Block', 'Flow', 'Common');
-                                  }); ?>
-                              <?php endif; ?>
+                            <?= SearchResultHelper::highlightFieldContent($paragraph, 'text'); ?>
                           </div>
                         </div>
                         <div class="d-flex justify-content-start book-name">
-                          <div><strong><i><?=$paragraph->book_name; ?></i></strong></div>
+                          <div><strong><i><?= SearchResultHelper::highlightFieldContent($paragraph, 'genre'); ?>.
+                           <?= SearchResultHelper::highlightFieldContent($paragraph, 'author'); ?> — 
+                           <?= SearchResultHelper::highlightFieldContent($paragraph, 'title'); ?></i></strong></div>
                         </div>
                       </div>
                     <?php endforeach; ?>
@@ -238,7 +230,7 @@ $inputTemplate = '<div class="input-group mb-2">
   </div>
   <?php endif; ?>
 
-      <?= ScrollWidget::widget(['data_entity_id' => isset($paragraph) ? $paragraph->uuid : 0]); ?>
+      <?= ScrollWidget::widget(['data_entity_id' => isset($paragraph) ? $paragraph->id : 0]); ?>
       <?php else: ?>
 <!--        <div class="card welcome-card">-->
 <!--          <div class="card-body">-->

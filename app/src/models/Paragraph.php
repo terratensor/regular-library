@@ -7,10 +7,10 @@ namespace src\models;
 use yii\base\Model;
 
 class Paragraph extends Model
-{
-    public string $uuid;
-    public string $book_id;
-    public string $book_name;
+{    
+    public string $genre;
+    public string $author;
+    public string $title;
     public string $text;
     public string $position;
     public string $length;
@@ -18,9 +18,6 @@ class Paragraph extends Model
     private int $id;
 
     public static function create(
-        string $uuid,
-        string $book_id,
-        string $book_name,
         string $text,
         string $position,
         string $length,
@@ -28,9 +25,6 @@ class Paragraph extends Model
     ): self {
         $paragraph = new static();
 
-        $paragraph->uuid = $uuid;
-        $paragraph->book_id = $book_id;
-        $paragraph->book_name = $book_name;
         $paragraph->text = $text;
         $paragraph->position = $position;
         $paragraph->length = $length;

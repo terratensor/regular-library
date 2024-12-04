@@ -55,6 +55,7 @@ $config = [
             'rules' => [
                 '' => 'site/index',
                 'print_page' => 'site/quote',
+                'context/<id:[\w\-]+>' => 'site/context',
                 '<_c:[\w\-]+>' => '<_c>/index',
                 '<_c:[\w\-]+>/<id:\d+>' => '<_c>/view',
                 '<_c:[\w\-]+>/<_a:[\w-]+>' => '<_c>/<_a>',

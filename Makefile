@@ -39,12 +39,13 @@ docker-down-clear:
 try-build:
 	REGISTRY=localhost IMAGE_TAG=0 make build
 
-build: build-frontend build-manticore
+build: build-frontend \
+	# build-manticore
 
 build-frontend:
 	DOCKER_BUILDKIT=1 docker --log-level=debug build --pull --build-arg BUILDKIT_INLINE_CACHE=1 \
 		--target builder \
-		--cache-from ${REGISTRY}/common-library-app:cache-builderr \
+		--cache-from ${REGISTRY}/common-library-app:cache-builder \
 		--tag ${REGISTRY}/common-library-app:cache-builder \
 		--file app/docker/production/Dockerfile app
 

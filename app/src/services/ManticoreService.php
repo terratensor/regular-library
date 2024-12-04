@@ -29,14 +29,11 @@ class ManticoreService
 
         try {
             $comments = match ($form->matching) {
-                'query_string' => $this->paragraphRepository
-                    ->findByQueryStringNew($queryString, $indexName ?? null, $form),
-                'match_phrase' => $this->paragraphRepository
-                    ->findByMatchPhrase($queryString, $indexName ?? null, $form),
-                'match' => $this->paragraphRepository
-                    ->findByQueryStringMatch($queryString, $indexName ?? null, $form),
-                'in' => $this->paragraphRepository
-                    ->findByParagraphId($queryString, $indexName ?? null, $form),
+                'query_string' => $this->paragraphRepository->findByQueryStringNew($queryString, $indexName ?? null, $form),
+                'match_phrase' => $this->paragraphRepository->findByMatchPhrase($queryString, $indexName ?? null, $form),
+                'match' => $this->paragraphRepository->findByQueryStringMatch($queryString, $indexName ?? null, $form),
+                'in' => $this->paragraphRepository->findByParagraphId($queryString, $indexName ?? null, $form),
+                'context' => $this->paragraphRepository->findByContext($form, $indexName ?? null),
             };
         } catch (\DomainException $e) {
             throw new EmptySearchRequestExceptions($e->getMessage());

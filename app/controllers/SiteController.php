@@ -2,10 +2,13 @@
 
 namespace app\controllers;
 
-
+use Exception;
+use Manticoresearch\Exceptions\ResponseException;
+use Psy\Context;
 use src\forms\QuoteForm;
 use src\forms\SearchForm;
 use src\Search\Http\Action\V1\SearchSettings\ToggleAction;
+use src\services\ContextService;
 use src\services\EmptySearchRequestExceptions;
 use src\services\ManticoreService;
 use src\services\NeighboringService;
@@ -20,18 +23,21 @@ class SiteController extends Controller
 {
     private ManticoreService $service;
     private NeighboringService $neighboringService;
+    private ContextService $contextService;
 
     public function __construct(
         $id,
         $module,
         ManticoreService $service,
         NeighboringService $neighboringService,
+        ContextService $contextService,
         $config = []
     )
     {
         parent::__construct($id, $module, $config);
         $this->service = $service;
         $this->neighboringService = $neighboringService;
+        $this->contextService = $contextService;
     }
 
     public function behaviors(): array
@@ -82,6 +88,8 @@ class SiteController extends Controller
             Yii::$app->session->setFlash('error', $e->getMessage());
         } catch (EmptySearchRequestExceptions $e) {
             $errorQueryMessage = $e->getMessage();
+        } catch (Exception $e) {
+            $errorQueryMessage = $e->getMessage();
         }
 
         return $this->render('index', [
@@ -89,6 +97,31 @@ class SiteController extends Controller
             'model' => $form,
             'errorQueryMessage' => $errorQueryMessage,
         ]);
+    }
+
+    public function actionContext($id): string
+    {
+        $this->layout = 'print';
+        $errorQueryMessage = 'The requested page does not exist.';
+
+        try {
+    
+            $quoteResults = $this->contextService->handle($id);
+            $results = $this->service->search($quoteResults->searchForm);
+
+            return $this->render('context', [
+                'results' => $results,
+                'bookName' => $quoteResults->bookName,
+            ]);
+            
+        } catch (\DomainException $e) {
+            Yii::$app->errorHandler->logException($e);
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        } catch (EmptySearchRequestExceptions $e) {
+            $errorQueryMessage = $e->getMessage();
+        }
+
+        throw new NotFoundHttpException($errorQueryMessage);
     }
 
     /**
