@@ -49,4 +49,3 @@ volumes:
     name: library-app
   manticore:
     name: library_manticore
-    external: true
