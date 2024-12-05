@@ -41,9 +41,6 @@ $this->registerMetaTag(['name' => 'description', 'content' => $this->params['met
                 'links' => $this->params['breadcrumbs'] ?? [],
             ]
         ) ?>
-        <?php if (Yii::$app->params['shortLinkEnable']): ?>
-        <?= ShortLinkModal::widget(); ?>
-        <?php endif; ?>
     </div>
       <?= Alert::widget() ?>
   </div>
