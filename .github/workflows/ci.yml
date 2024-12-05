@@ -39,6 +39,12 @@ jobs:
             username: audetv
             password: ${{ github.token }}
 
+      - name: Inject branch slug
+        uses: rlespinasse/github-slug-action@v3.x
+
+      - name: Set image tag
+        run: echo "::set-env name=IMAGE_TAG::${{ env.GITHUB_REF_SLUG }}-${GITHUB_RUN_NUMBER}"
+      
       - name: Build
         run: make build      
 
