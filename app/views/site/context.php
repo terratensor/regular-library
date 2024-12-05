@@ -15,7 +15,9 @@ use src\repositories\ParagraphDataProvider;
 use yii\bootstrap5\LinkPager;
 use yii\data\Pagination;
 
-$this->title = "Контекст — $bookName";
+$this->title = $bookName;
+$fragment = Yii::$app->request->get()['f'] ?? 0;
+
 ?>
 <div class="container-fluid quote-results">
 
@@ -34,27 +36,28 @@ $this->title = "Контекст — $bookName";
     ?>
   <div class="row">
     <div class="col-md-12">
-      <div class="card pt-3">
-        <div class="card-body">
-          <div class="px-xl-5 px-lg-5 px-md-5 px-sm-3 paragraph">
-              <?php foreach ($paragraphs as $paragraph): ?>
-                <?php //var_dump($paragraph); ?>
-                <div data-entity-id="<?= $paragraph->id; ?>">
-                  <div class="paragraph-text">
-                    <?= TextProcessor::widget(['text' => $paragraph->text]); ?>
-                  </div>
-                </div>
+      <div class="card pt-3 my-3">
+        <div class="card-body p-0">
+        <div class="px-xl-5 px-lg-5 px-md-5 px-sm-3 paragraph">
+            <?php foreach ($paragraphs as $paragraph): ?>
+              <div id="<?= $paragraph->position;?>" data-entity-id="<?= $paragraph->id; ?>"
+                class="<?= $fragment == $paragraph->position ? "card border-primary" : "" ?>">
+                <div class="card-body">
 
-              <?php endforeach; ?>
+                <div class="paragraph-text">
+                  <?= TextProcessor::widget(['text' => $paragraph->text]); ?>
+                </div>
+                </div>
+              </div>                
+            <?php endforeach; ?>
             <div class="d-flex justify-content-start book-name pt-4">
-              <div><strong><i><?= $paragraph->genre;?>. <?= $paragraph->author; ?> — <?= $paragraph->title; ?></i></strong></div>
+              <div><strong><i><?= $bookName; ?></i></strong></div>
             </div>
           </div>
-
         </div>
       </div>
-      <div class="container container-pagination">
-            <div class="detachable fixed-bottom">
+      <div class="container container-pagination d-print-none">
+            <div class="detachable">
                 <?php echo LinkPager::widget(
                     [
                         'pagination' => $pagination,

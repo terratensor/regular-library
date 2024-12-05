@@ -16,10 +16,10 @@ class ScrollWidget extends Widget
     {
         $this->view->registerJs($this->getJs());
 
-        $str = $this->showTop ? '<div id="toTop"></div>' : '';
+        $str = $this->showTop ? '<div id="toTop" class="d-print-none"></div>' : '';
 
         if ($this->data_entity_id) {
-            $str .= $this->showLast ? '<div id="toLast" style="display: block;"></div>' : '';
+            $str .= $this->showLast ? '<div id="toLast" class="d-print-none" style="display: block;"></div>' : '';
         }
         return $str;
     }

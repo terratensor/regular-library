@@ -99,8 +99,7 @@ class ParagraphDataProvider extends BaseDataProvider
     protected function prepareTotalCount()
     {
         try {
-
-        return $this->query->get()->getTotal();
+            return $this->query->get()->getTotal();
         } catch (\Exception $e) {
             return 0;
         }

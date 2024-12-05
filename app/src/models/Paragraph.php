@@ -15,6 +15,8 @@ class Paragraph extends Model
     public string $position;
     public string $length;
     public array $highlight;
+    public string $source_uuid;
+    public string $source;
     private int $id;
 
     public static function create(

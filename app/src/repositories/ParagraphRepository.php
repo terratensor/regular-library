@@ -72,8 +72,7 @@ class ParagraphRepository
         // Если нет совпадений no_match_size возвращает пустое поле для подсветки
         $search->highlight(
             ['genre', 'author', 'title', 'text'],
-            [
-                'highlight_query' => ['match' => ['*' => $queryString]],
+            [                
                 'limit' => 0,
                 'no_match_size' => 0,
                 'pre_tags' => '<mark>',
@@ -172,9 +171,15 @@ class ParagraphRepository
         return $search;
     }
 
+    /**
+     * @param SearchForm $form
+     * @param string|null $indexName
+     * @return Search
+     * "match" is a query that matches the entire phrase. It is similar to a phrase operator in SQL.
+     * The search is carried out by genre, author, title
+     */
     public function findByContext( SearchForm $form, ?string $indexName = null): Search
     {
-        // var_dump($form);
         $this->search->reset();
         if ($indexName) {
             $this->setIndex($this->client->index($indexName));
@@ -182,15 +187,11 @@ class ParagraphRepository
 
         // Запрос переделан под фильтр
         $query = new BoolQuery();
-
         
-        $query->must(new MatchQuery($form->genre, 'genre'));
-        $query->must(new MatchQuery($form->author, 'author'));
-        $query->must(new MatchQuery($form->title, 'title'));
-        
-
+        $query->must(new Equals('source_uuid', $form->source_uuid));
 
         $search = $this->index->search($query);
+        $search->facet('source_uuid');
 
         $search->highlight(
             ['genre', 'author', 'title', 'text'],
@@ -201,8 +202,6 @@ class ParagraphRepository
                 'post_tags' => '</mark>'
             ]
         );
-
-        // $search->sort('position', 'asc');
 
         return $search;
     }
@@ -353,6 +352,10 @@ class ParagraphRepository
     {
         /** @var \Manticoresearch\ResultHit **/
         $hit = $this->index->getDocumentById($id);
+
+        if (!$hit) {
+            throw new \DomainException('Параграф с не найден');
+        }
 
         $par = new Paragraph($hit->getData());
         $par->setId((int)$hit->getId());

@@ -193,17 +193,16 @@ p.summary {
     z-index: 100;
 }
 
+.container-pagination {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    bottom: 0;
+    position: sticky;
+}
+
 .container-pagination .detachable {
-    margin-top: 16px;
-    margin-bottom: 0;
-}
-
-.container-pagination .detachable.fixed-bottom {
-    margin-bottom: 1rem;
-}
-
-.container-pagination .mb-2.fixed-bottom {
-    margin-bottom: 0;
+    margin: 1rem 0;
 }
 
 .search-block {

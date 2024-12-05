@@ -10,9 +10,11 @@ class ContextPDO
 {
     public string $bookName;
     public SearchForm $searchForm;
+    public Paragraph $paragraph;
 
-    public function __construct(string $bookName, SearchForm $searchForm) {
+    public function __construct(string $bookName, SearchForm $searchForm, Paragraph $paragraph) {
         $this->bookName = $bookName;
         $this->searchForm = $searchForm;
+        $this->paragraph = $paragraph;
     }
 }

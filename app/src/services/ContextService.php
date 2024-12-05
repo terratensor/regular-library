@@ -6,6 +6,7 @@ namespace src\services;
 
 use src\forms\QuoteForm;
 use src\forms\SearchForm;
+use src\helpers\SourceHelper;
 use src\models\ContextPDO;
 use src\models\QuoteResultPdo;
 use src\repositories\ParagraphRepository;
@@ -31,7 +32,8 @@ class ContextService
         $form->genre = $paragraph->genre;
         $form->author = $paragraph->author;
         $form->title = $paragraph->title;
+        $form->source_uuid = $paragraph->source_uuid;
 
-        return new ContextPDO($paragraph->title, $form);
+        return new ContextPDO(SourceHelper::fullName($paragraph), $form, $paragraph);
     }
 }

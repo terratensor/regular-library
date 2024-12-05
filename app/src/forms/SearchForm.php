@@ -13,6 +13,7 @@ class SearchForm extends Model
     public string $author = '';
     public string $title = '';
     public string $text = '';
+    public string $source_uuid = '';
     public string $matching = 'query_string';
 
     public function rules(): array
@@ -23,6 +24,7 @@ class SearchForm extends Model
             ['author', 'string'],
             ['title', 'string'],
             ['text', 'string'],
+            ['source_uuid', 'string'],
             ['matching', 'in', 'range' => array_keys($this->getMatching())],
         ];
     }
