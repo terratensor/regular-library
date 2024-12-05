@@ -27,7 +27,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Cache APP Composer
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: vendor
           key: app-composer-${{ hashFiles('app/composer.lock') }}
