@@ -151,7 +151,7 @@ function copyFile($root, $source, $target, &$all, $params)
             echo "            ...overwrite? [Yes|No|All|Quit] ";
 
 
-            $answer = !empty($params['overwrite']) ? $params['overwrite'] : trim("All");
+            $answer = !empty($params['overwrite']) ? $params['overwrite'] : trim("No");
             if (!strncasecmp($answer, 'q', 1)) {
                 return false;
             } else {
