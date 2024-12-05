@@ -1,3 +1,28 @@
+# library-app
+
+Manual Docker Setup
+If you prefer to set up Docker manually, follow these steps for Open WebUI.
+
+Step 1: Pull the Open WebUI Image
+Start by pulling the latest Open WebUI Docker image from the GitHub Container Registry.
+
+```
+docker pull ghcr.io/terratensor/library-app:main
+```
+
+Step 2: Run the Container
+Run the container with default settings. This command includes a volume mapping to ensure persistent data storage.
+
+```
+docker run -d -p 8030:80 -v library-app:/app/data --name library-app ghcr.io/terratensor/library-app:main
+```
+
+
+Important Flags
+Volume Mapping (-v open-webui:/app/backend/data): Ensures persistent storage of your data. This prevents data loss between container restarts.
+Port Mapping (-p 3000:8080): Exposes the WebUI on port 3000 of your local machine.
+
+
 # regular-library
 
 
