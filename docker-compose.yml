@@ -18,13 +18,13 @@ services:
       COOKIE_DOMAIN: localhost
       COOKIE_VALIDATION_KEY_FILE: /run/secrets/app_cookie_validation_key
       MANTICORE_DB_NAME_COMMON: library
-      MANTICORE_MAX_MATCHES: 1000
+      MANTICORE_MAX_MATCHES: 0
       SHORT_LINK_ENABLE: 0
       CLEAN_DESIGN: 1
     volumes:
       - ~/.composer-docker/cache:/root/.composer/cache:delegated
       - ./app:/app:delegated
-      - ./app/data:/app/data
+      - library-app:/app/data
     ports:
       - '8030:80'
 
@@ -53,6 +53,10 @@ services:
   #   volumes:
   #     - manticore:/var/lib/manticore
   #     - manticore:/var/log/manticore
+
+volumes:
+  library-app:
+    name: library-app
 
 networks:
   library-net:
