@@ -63,7 +63,7 @@ class SiteController extends Controller
                 'class' => ToggleAction::class,
             ],
             'short-link' => [
-                'class' => ShortLinkAction::Class,
+                'class' => ShortLinkAction::class,
             ],
         ];
     }
@@ -108,6 +108,8 @@ class SiteController extends Controller
     
             $quoteResults = $this->contextService->handle($id);
             $results = $this->service->search($quoteResults->searchForm);
+
+            // var_dump($quoteResults->bookName); die();
 
             return $this->render('context', [
                 'results' => $results,
