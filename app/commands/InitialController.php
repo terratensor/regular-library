@@ -14,12 +14,12 @@ class InitialController extends \yii\console\Controller
 {
     public function actionIndex()
     {
-        $path = __DIR__.'/../data/library.db';        
+        $path = __DIR__ . '/../data/library.db';
         $resource = fopen($path, 'a');
         if ($resource) {
             $this->stdout('Checking the database file is successful' . PHP_EOL, Console::FG_GREEN);
         } else {
-            $this->stdout('Checking the database file is an error' . PHP_EOL, Console::FG_RED);            
+            $this->stdout('Checking the database file is an error' . PHP_EOL, Console::FG_RED);
         }
         fclose($resource);
     }

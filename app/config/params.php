@@ -7,9 +7,6 @@ return [
     'cookieDomain' => getenv('COOKIE_DOMAIN') ?? 'localhost',
     'frontendHostInfo' => getenv('FRONTEND_URL') ?? 'http://localhost:8030',
     'githubRepositoryUrl' => getenv('GH_REPO_URL') ?? 'https://github.com/terratensor/regular-library',
-    'urlShortenerHost' => getenv('URL_SHORTENER_HOST') ?? 'url-shortener:8000', // Хост в сети интернет, в локальной сети docker - это наименования сервиса
-    'urlShortenerUrl' => getenv('URL_SHORTENER_URL') ?? 'http://localhost', // Хост в сети интернет, в локальной сети docker - это наименования сервиса
-    'shortLinkEnable' => getenv('SHORT_LINK_ENABLE') ?? 0,
     'cleanDesign' => getenv('CLEAN_DESIGN') ?? 1, // default 0 не показывать меню сайта СВОДД, ничего лишнего
     'manticore' => [
         'host' => 'manticore',

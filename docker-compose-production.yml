@@ -1,4 +1,3 @@
-version: '3.9'
 services:
   app:
     image: ${REGISTRY}/library-app:${IMAGE_TAG}
@@ -10,23 +9,15 @@ services:
       COMPOSER_ALLOW_SUPERUSER: 1
       FRONTEND_URL: 'http://localhost:8030'
       GH_REPO_URL: 'https://github.com/terratensor/regular-library'
-      POSTGRES_HOST: postgres
-      POSTGRES_USER: app
-      POSTGRES_PASSWORD_FILE: /run/secrets/app_db_password
-      POSTGRES_DB: common-library
       PAGE_SIZE: 50
-      URL_SHORTENER_HOST: url-shortener:8000
-      URL_SHORTENER_URL: http://localhost
       COOKIE_DOMAIN: localhost
-      COOKIE_VALIDATION_KEY_FILE: /run/secrets/app_cookie_validation_key
       MANTICORE_DB_NAME_COMMON: library
       MANTICORE_MAX_MATCHES: 1000
-      SHORT_LINK_ENABLE: 0
       CLEAN_DESIGN: 1
     volumes:
       # - ~/.composer-docker/cache:/root/.composer/cache:delegated
       # - ./app:/app:delegated
-      - ./app/data:/app/data
+      - library-app:/app/data
     ports:
       - '8030:80'
 
@@ -56,9 +47,9 @@ services:
   #     - manticore:/var/lib/manticore
   #     - manticore:/var/log/manticore
 
-# volumes:
-#   # manticore:
-#   sqlite:
+volumes:
+  library-app:
+    name: library-app
 
 networks:
   library-net:

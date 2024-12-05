@@ -21,6 +21,7 @@ app-composer-install:
 	docker compose run --rm app composer install
 
 app-console:
+	docker compose run --rm app php init-actions --interactive=0
 	docker compose run --rm app php yii initial/index --interactive=0
 
 app-migrations:
