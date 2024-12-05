@@ -10,6 +10,8 @@
 use app\widgets\ScrollWidget;
 use app\widgets\SearchResultsSummary;
 use src\forms\SearchForm;
+use src\helpers\SearchResultHelper;
+use src\helpers\TextProcessor;
 use src\models\Paragraph;
 use src\repositories\ParagraphDataProvider;
 use yii\bootstrap5\ActiveForm;
@@ -53,7 +55,7 @@ $inputTemplate = '<div class="input-group mb-2">
 ?>
   <div class="site-index">
       <?php if (Yii::$app->params['cleanDesign']): ?>
-  <div class="search-block" style="top:0">
+  <div class="d-print-none search-block" style="top:0">
         <?php else: ?>
     <div class="search-block">
         <?php endif; ?>
@@ -124,43 +126,40 @@ $inputTemplate = '<div class="input-group mb-2">
                 </div>
               </div>
 
-              <div class="card pt-3">
+              <div class="card pt-3 mb-2">
                 <div class="card-body">
                     <?php foreach ($paragraphs as $paragraph): ?>
-                      <div class="px-xl-5 px-lg-5 px-md-5 px-sm-3 paragraph" data-entity-id="<?= $paragraph->uuid; ?>">
+                      <div class="px-xl-5 px-lg-5 px-md-5 px-sm-3 paragraph" data-entity-id="<?= $paragraph->id; ?>">
                         <div class="paragraph-header">
                           <div class="d-flex justify-content-between">
                             <div>
 
                             </div>
-                            <div class="paragraph-context">
-                                <?= Html::button('контекст', [
-                                        'class' => 'btn btn-link btn-context paragraph-context',
-                                        'data-uuid' => $paragraph->uuid,
-                                ]); ?>
+                            <div class="paragraph-context d-print-none">
+                              <?php $total = ceil($paragraph->position / $pagination->pageSize); ?>
+                              <?= Html::a('контекст', 
+                                [
+                                  'site/context', 'id' => $paragraph->id,
+                                  'page' => $total,
+                                  'f' => $paragraph->position,
+                                  '#' => $paragraph->position
+                                ],
+                                [
+                                  'class' => 'btn btn-link btn-context paragraph-context',
+                                  'target' => '_blank'
+                                ]); ?>                                
                             </div>
                           </div>
                         </div>
                         <div>
                           <div class="paragraph-text">
-                              <?php if (!$paragraph->highlight['text'] || !$paragraph->highlight['text'][0]): ?>
-                                  <?php Yii::$app->formatter->asRaw(htmlspecialchars($paragraph->text)); ?>
-                                  <?php echo \yii\helpers\HtmlPurifier::process(htmlspecialchars($paragraph->text), function ($config) {
-                                      /** @var $config HTMLPurifier_Config */
-                                      $config->getHTMLDefinition(true)
-                                          ->addElement('mark', 'Block', 'Flow', 'Common');
-                                  }); ?>
-                              <?php else: ?>
-                                  <?php echo \yii\helpers\HtmlPurifier::process($paragraph->highlight['text'][0], function ($config) {
-                                      /** @var $config HTMLPurifier_Config */
-                                      $config->getHTMLDefinition(true)
-                                          ->addElement('mark', 'Block', 'Flow', 'Common');
-                                  }); ?>
-                              <?php endif; ?>
+                            <?= SearchResultHelper::highlightFieldContent($paragraph, 'text'); ?>
                           </div>
                         </div>
                         <div class="d-flex justify-content-start book-name">
-                          <div><strong><i><?=$paragraph->book_name; ?></i></strong></div>
+                          <div><strong><i><?= SearchResultHelper::highlightFieldContent($paragraph, 'genre'); ?>.
+                           <?= SearchResultHelper::highlightFieldContent($paragraph, 'author'); ?> — 
+                           <?= SearchResultHelper::highlightFieldContent($paragraph, 'title'); ?></i></strong></div>
                         </div>
                       </div>
                     <?php endforeach; ?>
@@ -168,11 +167,8 @@ $inputTemplate = '<div class="input-group mb-2">
               </div>
 
             <?php endif; ?>
-
-
-
-          <div class="container container-pagination">
-            <div class="detachable fixed-bottom">
+          <div class="container container-pagination d-p">
+            <div class="detachable">
                 <?php echo LinkPager::widget(
                     [
                         'pagination' => $pagination,
@@ -192,7 +188,7 @@ $inputTemplate = '<div class="input-group mb-2">
       </div>
     </div>
 <?php if (Yii::$app->params['cleanDesign']): ?>
-  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none d-print-none">
     <symbol id="check2" viewBox="0 0 16 16">
       <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"></path>
     </symbol>
@@ -207,12 +203,12 @@ $inputTemplate = '<div class="input-group mb-2">
       <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"></path>
     </symbol>
   </svg>
-  <div class="color-theme-widget dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
+  <div class="color-theme-widget dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle d-print-none">
     <button class="btn btn-secondary py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (light)">
       <svg class="bi my-1 theme-icon-active" width="1em" height="1em"><use href="#sun-fill"></use></svg>
       <span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
     </button>
-    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text" style="">
+    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
       <li>
         <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="light" aria-pressed="true">
           <svg class="bi me-2 opacity-50 theme-icon" width="1em" height="1em"><use href="#sun-fill"></use></svg>
@@ -238,7 +234,7 @@ $inputTemplate = '<div class="input-group mb-2">
   </div>
   <?php endif; ?>
 
-      <?= ScrollWidget::widget(['data_entity_id' => isset($paragraph) ? $paragraph->uuid : 0]); ?>
+      <?= ScrollWidget::widget(['data_entity_id' => isset($paragraph) ? $paragraph->id : 0]); ?>
       <?php else: ?>
 <!--        <div class="card welcome-card">-->
 <!--          <div class="card-body">-->

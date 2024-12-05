@@ -1,7 +1,8 @@
 version: '3.9'
 services:
   app:
-    image: yiisoftware/yii2-php:8.3-apache
+    image: ${REGISTRY}/library-app:${IMAGE_TAG}
+    container_name: library-app
     networks:
       - library-net
     environment:
@@ -23,8 +24,8 @@ services:
       SHORT_LINK_ENABLE: 0
       CLEAN_DESIGN: 1
     volumes:
-      - ~/.composer-docker/cache:/root/.composer/cache:delegated
-      - ./app:/app:delegated
+      # - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      # - ./app:/app:delegated
       - ./app/data:/app/data
     ports:
       - '8030:80'
@@ -54,6 +55,10 @@ services:
   #   volumes:
   #     - manticore:/var/lib/manticore
   #     - manticore:/var/log/manticore
+
+# volumes:
+#   # manticore:
+#   sqlite:
 
 networks:
   library-net:

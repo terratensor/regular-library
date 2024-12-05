@@ -1,11 +1,12 @@
 version: '3.9'
 services:
   app:
-    image: yiisoftware/yii2-php:8.3-apache
+    image: yiisoftware/yii2-php:8.1-apache
     networks:
+      - regular-library-net
       - library-net
     environment:
-      APP_ENV: dev 
+      APP_ENV: dev
       COMPOSER_ALLOW_SUPERUSER: 1
       FRONTEND_URL: 'http://localhost:8030'
       GH_REPO_URL: 'https://github.com/terratensor/regular-library'
@@ -22,39 +23,44 @@ services:
       MANTICORE_MAX_MATCHES: 1000
       SHORT_LINK_ENABLE: 0
       CLEAN_DESIGN: 1
+    secrets:
+      - app_db_password
+      - app_cookie_validation_key
     volumes:
       - ~/.composer-docker/cache:/root/.composer/cache:delegated
       - ./app:/app:delegated
-      - ./app/data:/app/data
     ports:
       - '8030:80'
 
-  # manticore:
-  #   container_name: regular-library-manticore
-  #   image: manticoresearch/manticore
-  #   environment:
-  #     - EXTRA=1
-  #   ports:
-  #     - "127.0.0.1:9316:9306"
-  #     - "127.0.0.1:9318:9308"
-  #     - "127.0.0.1:9322:9312"
+  postgres:
+    container_name: regular-library-postgres
+    image: postgres:15.1-alpine
+    ports:
+      - "54322:5432"
+    environment:
+      APP_ENV: dev
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: app
+      POSTGRES_DB: common-library
+      POSTGRES_PASSWORD_FILE: /run/secrets/app_db_password
+    secrets:
+      - app_db_password
+    networks:
+      - regular-library-net
+    volumes:
+      - postgres:/var/lib/postgresql/data
 
-  #   cap_add:
-  #     - IPC_LOCK
-  #   ulimits:
-  #     nproc: 65535
-  #     nofile:
-  #       soft: 65535
-  #       hard: 65535
-  #     memlock:
-  #       soft: -1
-  #       hard: -1
-  #   networks:
-  #      - library-net
-  #   volumes:
-  #     - manticore:/var/lib/manticore
-  #     - manticore:/var/log/manticore
+secrets:
+  app_db_password:
+    file: ./docker/development/secrets/app_db_password
+  app_cookie_validation_key:
+    file: ./docker/development/secrets/app_cookie_validation_key
+
+volumes:
+  postgres:
 
 networks:
+  regular-library-net:
+    name: regular-library-net
   library-net:
     name: library-net

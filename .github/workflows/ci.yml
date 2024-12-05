@@ -1,0 +1,53 @@
+name: Pipeline
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '**/README.md'
+      - '.github/**'
+      - 'userguide/**'
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - '**/README.md'
+      - '.github/**'
+      - 'userguide/**'
+
+env:
+  REGISTRY: ghcr.io/terratensor
+  REGISTRY_HOST: ghcr.io
+  ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache APP Composer
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: app-composer-${{ hashFiles('app/composer.lock') }}
+
+      - name: Docker Login
+        uses: azure/docker-login@v1
+        with:
+            login-server: ${{ env.REGISTRY_HOST }}
+            username: audetv
+            password: ${{ github.token }}
+
+      - name: Inject branch slug
+        uses: rlespinasse/github-slug-action@v5
+
+      - name: Set image tag
+        run: echo "::set-env name=IMAGE_TAG::${{ env.GITHUB_REF_SLUG }}-${GITHUB_RUN_NUMBER}"
+      
+      - name: Build
+        run: make build      
+
+      - name: Push
+        run: make push
+    

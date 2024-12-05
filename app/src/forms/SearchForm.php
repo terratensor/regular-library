@@ -9,12 +9,22 @@ use yii\base\Model;
 class SearchForm extends Model
 {
     public string $query = '';
+    public string $genre = '';
+    public string $author = '';
+    public string $title = '';
+    public string $text = '';
+    public string $source_uuid = '';
     public string $matching = 'query_string';
 
     public function rules(): array
     {
         return [
             ['query', 'string'],
+            ['genre', 'string'],
+            ['author', 'string'],
+            ['title', 'string'],
+            ['text', 'string'],
+            ['source_uuid', 'string'],
             ['matching', 'in', 'range' => array_keys($this->getMatching())],
         ];
     }
@@ -22,9 +32,9 @@ class SearchForm extends Model
     public function getMatching(): array
     {
         return [
-            'query_string' => 'По умолчанию',
-            'match_phrase' => 'По соответствию фразе',
-            'match' => 'По совпадению слов',
+            'query_string' => 'Обычный поиск',
+            'match_phrase' => 'Точное соответствие',
+            'match' => 'Любое слово',
         ];
     }
 

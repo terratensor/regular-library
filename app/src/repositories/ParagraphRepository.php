@@ -52,28 +52,27 @@ class ParagraphRepository
             $this->setIndex($this->client->index($indexName));
         }
 
-        $queryString = SearchHelper::escapingCharacters($queryString);
+        $queryString = SearchHelper::processStringWithURLs($queryString);
+        $queryString = SearchHelper::escapeUnclosedQuotes($queryString);
 
         // Запрос переделан под фильтр
         $query = new BoolQuery();
 
         if ($form->query) {
-            $query->must(new QueryString("@text " . $queryString));
+            $query->must(new QueryString($queryString));
         }
 
         // Выполняем поиск если установлен фильтр или установлен строка поиска
         if ($form->query) {
             $search = $this->index->search($query);
-//            $search->facet('book_id');
-//            var_dump($search->facet('book_id'));
         } else {
             throw new \DomainException('Задан пустой поисковый запрос');
         }
 
         // Если нет совпадений no_match_size возвращает пустое поле для подсветки
         $search->highlight(
-            ['text'],
-            [
+            ['genre', 'author', 'title', 'text'],
+            [                
                 'limit' => 0,
                 'no_match_size' => 0,
                 'pre_tags' => '<mark>',
@@ -104,7 +103,7 @@ class ParagraphRepository
         $query = new BoolQuery();
 
         if ($form->query) {
-            $query->must(new MatchQuery($queryString, 'text'));
+            $query->must(new MatchQuery($queryString, '*'));
         }
 
         // Выполняем поиск если установлен фильтр или установлен строка поиска
@@ -115,7 +114,7 @@ class ParagraphRepository
         }
 
         $search->highlight(
-            ['text'],
+            ['genre', 'author', 'title', 'text'],
             [
                 'limit' => 0,
                 'no_match_size' => 0,
@@ -148,7 +147,7 @@ class ParagraphRepository
         $query = new BoolQuery();
 
         if ($form->query) {
-            $query->must(new MatchPhrase($queryString, 'text'));
+            $query->must(new MatchPhrase($queryString, '*'));
         }
 
 
@@ -160,7 +159,42 @@ class ParagraphRepository
         }
 
         $search->highlight(
-            ['text'],
+            ['genre', 'author', 'title', 'text'],
+            [
+                'limit' => 0,
+                'no_match_size' => 0,
+                'pre_tags' => '<mark>',
+                'post_tags' => '</mark>'
+            ]
+        );
+
+        return $search;
+    }
+
+    /**
+     * @param SearchForm $form
+     * @param string|null $indexName
+     * @return Search
+     * "match" is a query that matches the entire phrase. It is similar to a phrase operator in SQL.
+     * The search is carried out by genre, author, title
+     */
+    public function findByContext( SearchForm $form, ?string $indexName = null): Search
+    {
+        $this->search->reset();
+        if ($indexName) {
+            $this->setIndex($this->client->index($indexName));
+        }
+
+        // Запрос переделан под фильтр
+        $query = new BoolQuery();
+        
+        $query->must(new Equals('source_uuid', $form->source_uuid));
+
+        $search = $this->index->search($query);
+        $search->facet('source_uuid');
+
+        $search->highlight(
+            ['genre', 'author', 'title', 'text'],
             [
                 'limit' => 0,
                 'no_match_size' => 0,
@@ -288,6 +322,7 @@ class ParagraphRepository
 
     /**
      * Возвращает paragraph по uuid
+     * @deprecated
      * @param string $uuid
      * @return Paragraph
      */
@@ -306,5 +341,25 @@ class ParagraphRepository
         $paragraph = new Paragraph($current->getData());
         $paragraph->setId((int)$current->getId());
         return $paragraph;
+    }
+
+    /**
+     * Возвращает paragraph по id
+     * @param string $uuid
+     * @return Paragraph
+     */
+    public function getByParagraphID(string $id): Paragraph
+    {
+        /** @var \Manticoresearch\ResultHit **/
+        $hit = $this->index->getDocumentById($id);
+
+        if (!$hit) {
+            throw new \DomainException('Параграф с не найден');
+        }
+
+        $par = new Paragraph($hit->getData());
+        $par->setId((int)$hit->getId());
+
+        return $par;
     }
 }
